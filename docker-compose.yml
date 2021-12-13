@@ -3,7 +3,7 @@ volumes:
 
 services:
   dev:
-    image: icalia-actions/map-actor-to-slack:development
+    image: icalia-actions/map-github-actor:development
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,11 +11,11 @@ services:
       args:
         DEVELOPER_UID: ${UID:-1000}
         DEVELOPER_USERNAME: ${USER:-you}
-    working_dir: /workspaces/map-actor-to-slack
-    entrypoint: /workspaces/map-actor-to-slack/bin/dev-entrypoint
+    working_dir: /workspaces/map-github-actor
+    entrypoint: /workspaces/map-github-actor/bin/dev-entrypoint
     volumes:
-      - .:/workspaces/map-actor-to-slack
-      - node_modules:/workspaces/map-actor-to-slack/node_modules
+      - .:/workspaces/map-github-actor
+      - node_modules:/workspaces/map-github-actor/node_modules
 
     # Keep the stdin open, so we can attach to our app container's process
     # and do things such as byebug, etc:

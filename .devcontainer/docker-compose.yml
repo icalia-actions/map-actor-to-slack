@@ -5,8 +5,8 @@ volumes:
 services:
   dev:
     volumes:
-      - .:/workspaces/map-actor-to-slack
-      - node_modules:/workspaces/map-actor-to-slack/node_modules
+      - .:/workspaces/map-github-actor
+      - node_modules:/workspaces/map-github-actor/node_modules
       - vscode_extensions:/home/${USER:-you}/.vscode-server/extensions
       - vscode_insiders_extensions:/home/${USER:-you}/.vscode-server-insiders/extensions
 

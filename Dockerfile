@@ -25,22 +25,22 @@ RUN id ${DEVELOPER_UID} \
 
 # Ensure the home directory and source code directory are owned by the developer:
 # (A workaround to a side effect of setting WORKDIR before creating the user)
-RUN mkdir -p /workspaces/map-actor-to-slack \
- && chown -R ${DEVELOPER_UID}:node /workspaces/map-actor-to-slack
+RUN mkdir -p /workspaces/map-github-actor \
+ && chown -R ${DEVELOPER_UID}:node /workspaces/map-github-actor
 
 # Add the project's executable path to the system PATH:
-ENV PATH=/workspaces/map-actor-to-slack/bin:$PATH
+ENV PATH=/workspaces/map-github-actor/bin:$PATH
 
 # Configure the app dir as the working dir:
-WORKDIR /workspaces/map-actor-to-slack
+WORKDIR /workspaces/map-github-actor
 
 # Switch to the developer user:
 USER ${DEVELOPER_UID}
 
 # Copy and install the project dependency lists into the container image:
-COPY --chown=${DEVELOPER_UID} package.json yarn.lock /workspaces/map-actor-to-slack/
+COPY --chown=${DEVELOPER_UID} package.json yarn.lock /workspaces/map-github-actor/
 RUN yarn install
-ENV PATH=/workspaces/map-actor-to-slack/node_modules/.bin:$PATH
+ENV PATH=/workspaces/map-github-actor/node_modules/.bin:$PATH
 
 # Stage III: Development =======================================================
 FROM testing AS development
@@ -96,12 +96,12 @@ FROM testing AS builder
 
 ARG DEVELOPER_UID=1000
 
-COPY --chown=${DEVELOPER_UID} . /workspaces/map-actor-to-slack/
+COPY --chown=${DEVELOPER_UID} . /workspaces/map-github-actor/
 RUN yarn build
 
 RUN rm -rf .env .npmignore __test__ action.yml bin ci-compose.yml coverage src tsconfig.json yarn.lock tmp
 
 # Stage V: Release =============================================================
 FROM runtime AS release
-COPY --from=builder --chown=node:node /workspaces/map-actor-to-slack /workspaces/map-actor-to-slack
-WORKDIR /workspaces/map-actor-to-slack
+COPY --from=builder --chown=node:node /workspaces/map-github-actor /workspaces/map-github-actor
+WORKDIR /workspaces/map-github-actor
