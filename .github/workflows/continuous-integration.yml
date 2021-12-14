@@ -150,12 +150,14 @@ jobs:
             DEVELOPER_USERNAME=${{ env.BUILD_RUNNER_USER }}
           tags: |
             icalia-actions/map-github-actor:${{ env.GIT_DASHERIZED_BRANCH }}
-            icalia-actions/map-github-actor:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
       - name: Check if dist is up to date
         run: |
-          docker run --rm icalia-actions/map-github-actor:latest cat index.js > dist/index.js
+          docker run --rm icalia-actions/map-github-actor:${{ env.GIT_DASHERIZED_BRANCH }} cat index.js > dist/index.js
           git diff --quiet --exit-code || echo "::error ::dist/index.js is not up to date - perform a build and commit"
           git diff --quiet --exit-code
