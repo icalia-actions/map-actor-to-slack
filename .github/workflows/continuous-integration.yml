@@ -143,7 +143,7 @@ jobs:
 
           builder: ${{ steps.buildx.outputs.name }}
 
-          push: true
+          load: true
 
           build-args: |
             DEVELOPER_UID=${{ env.BUILD_RUNNER_UID }}
