@@ -3,7 +3,7 @@ volumes:
 
 services:
   tests:
-    image: icalia-actions/map-github-actor:testing-latest
+    image: icalia-actions/map-github-actor${TESTING_IMAGE_TAG:-:testing-latest}
     build:
       target: testing
       context: .

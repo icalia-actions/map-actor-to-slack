@@ -100,7 +100,7 @@ jobs:
             DEVELOPER_UID=${{ env.BUILD_RUNNER_UID }}
             DEVELOPER_USERNAME=${{ env.BUILD_RUNNER_USER }}
           tags: |
-            icalia-actions/map-github-actor:testing-${{ steps.variables.outputs.git-dasherized-branch }}
+            icalia-actions/map-github-actor:testing-${{ env.GIT_DASHERIZED_BRANCH }}
             icalia-actions/map-github-actor:testing-latest
           cache-from: type=gha
 
@@ -149,7 +149,7 @@ jobs:
             DEVELOPER_UID=${{ env.BUILD_RUNNER_UID }}
             DEVELOPER_USERNAME=${{ env.BUILD_RUNNER_USER }}
           tags: |
-            icalia-actions/map-github-actor:${{ steps.variables.outputs.git-dasherized-branch }}
+            icalia-actions/map-github-actor:${{ env.GIT_DASHERIZED_BRANCH }}
             icalia-actions/map-github-actor:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
