@@ -97,11 +97,11 @@ FROM testing AS builder
 ARG DEVELOPER_UID=1000
 
 COPY --chown=${DEVELOPER_UID} . /workspaces/map-github-actor/
-RUN yarn build
+RUN yarn build && yarn package
 
 RUN rm -rf .env .npmignore __test__ action.yml bin ci-compose.yml coverage src tsconfig.json yarn.lock tmp
 
 # Stage V: Release =============================================================
 FROM runtime AS release
-COPY --from=builder --chown=node:node /workspaces/map-github-actor /workspaces/map-github-actor
-WORKDIR /workspaces/map-github-actor
+COPY --from=builder --chown=node:node /workspaces/map-github-actor/dist /workspaces/map-github-actor/dist
+WORKDIR /workspaces/map-github-actor/dist
