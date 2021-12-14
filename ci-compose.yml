@@ -1,0 +1,16 @@
+volumes:
+  node_modules:
+
+services:
+  tests:
+    image: icalia-actions/map-github-actor:testing-latest
+    build:
+      target: testing
+      context: .
+      args:
+        DEVELOPER_UID: ${UID:-1000}
+        DEVELOPER_USERNAME: ${USER:-you}
+    command: yarn test
+    volumes:
+      - .:/workspaces/map-github-actor
+      - node_modules:/workspaces/map-github-actor/node_modules
