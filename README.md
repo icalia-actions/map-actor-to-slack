@@ -1,105 +1,59 @@
-<p align="center">
-  <a href="https://github.com/icalia-actions/map-github-actor/actions"><img alt="map-github-actor status" src="https://github.com/icalia-actions/map-github-actor/workflows/build-test/badge.svg"></a>
-</p>
+# Map GitHub Actor
 
-# Create a JavaScript Action using TypeScript
+![Continuous Integration](https://github.com/icalia-actions/map-github-actor/actions/workflows/ci-and-cd.yml/badge.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/24f8e766fa7be69fca13/maintainability)](https://codeclimate.com/github/icalia-actions/map-github-actor/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/24f8e766fa7be69fca13/test_coverage)](https://codeclimate.com/github/icalia-actions/map-github-actor/test_coverage)
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.
+This action checks the workflow actor (i.e. the GitHub user that triggered the
+action) to any identifier such as Slack ID's, email addresses, etc.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+## Usage
 
-## Create an action from this template
-
-Click the `Use this Template` and provide the new repo details for your action
-
-## Code in Main
-
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies
-```bash
-$ npm install
-```
-
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
-```
-
-Run the tests :heavy_check_mark:
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder.
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
+On any of your GitHub Actions workflows:
 
 ```yaml
-uses: ./
-with:
-  milliseconds: 1000
+name: CI & CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_something:
+    runs-on: ubuntu-latest
+    steps:
+      # Figure out who the GitHub actor is on Slack:
+      - name: Map actor to slack
+        id: map-actor-to-slack
+        uses: icalia-actions/map-github-actor@v0.0.1
+        with:
+          actor-map: '{"octocat":"U0000000000","otheruser":"U0000000000"}'
+          default-mapping: C0000000000 # If the mapping is not found, send to a channel instead
+
+      # Then, say hello on Slack:
+      - name: Say hello on Slack
+        uses: slackapi/slack-github-action@v1.15.0
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.YOUR_SLACK_BOT_TOKEN }}
+        with:
+          channel-id: ${{ steps.map-actor-to-slack.outputs.actor-mapping }}
+          slack-message: Hello ${{ env.GITHUB_ACTOR }}! Mucho gusto!
 ```
 
-See the [actions tab](https://github.com/icalia-actions/map-github-actor/actions) for runs of this action! :rocket:
+### Inputs
 
-## Usage:
+| Name              | Type   | Description                                   |
+|-------------------|--------|-----------------------------------------------|
+| `actor-map`       | String | A JSON String or the location of a JSON file  |
+| `default-mapping` | String | The default mapping if the actor is not found |
 
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+### Outputs
+
+| Name              | Type   | Description                                    |
+|-------------------|--------|------------------------------------------------|
+| `actor-mapping`   | String | The matched mapping corresponding to the actor |
