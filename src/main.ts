@@ -1,16 +1,25 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {mapActor} from './map-actor'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const defaultMapping: string = core.getInput('default-mapping', {
+      required: true
+    })
+    const mappingSource: string = core.getInput('actor-map', {required: true})
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const actor: string = process.env.GITHUB_ACTOR as string
 
-    core.setOutput('time', new Date().toTimeString())
+    const actorMapping: string | undefined = mapActor(actor, mappingSource)
+
+    if (actorMapping) {
+      core.setOutput('actor-mapping', actorMapping)
+    } else {
+      core.warning(
+        `The GitHub actor "${actor}" was not found on the provided actor map.`
+      )
+      core.setOutput('actor-mapping', defaultMapping)
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }

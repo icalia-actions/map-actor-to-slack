@@ -1,29 +1,32 @@
-import {wait} from '../src/wait'
-import * as process from 'process'
-import * as cp from 'child_process'
 import * as path from 'path'
-import {expect, test} from '@jest/globals'
+import {mapActor} from '../src/map-actor'
+import {expect, describe, it} from '@jest/globals'
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number')
-})
+const context = describe
+const FIXTURE_FILES = path.resolve(__dirname, 'fixtures/files')
 
-test('wait 500 ms', async () => {
-  const start = new Date()
-  await wait(500)
-  const end = new Date()
-  var delta = Math.abs(end.getTime() - start.getTime())
-  expect(delta).toBeGreaterThan(450)
-})
+describe('Actor Mapper', () => {
+  context('when given a JSON string as the map source', () => {
+    it('maps an actor to a value in the parsed JSON string', () => {
+      const exampleActor = 'example-actor'
+      const exampleMapSource = '{"example-actor":"expected-mapping"}'
+      expect(mapActor(exampleActor, exampleMapSource)).toBe('expected-mapping')
+    })
+  })
 
-// shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = '500'
-  const np = process.execPath
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecFileSyncOptions = {
-    env: process.env
-  }
-  console.log(cp.execFileSync(np, [ip], options).toString())
+  context('when given the location of a JSON file as the map source', () => {
+    it('maps an actor to a value in the parsed JSON file', () => {
+      const exampleActor = 'example-actor'
+      const exampleMapSource = path.resolve(FIXTURE_FILES, 'example-map.json')
+      expect(mapActor(exampleActor, exampleMapSource)).toBe('expected-mapping')
+    })
+  })
+
+  context('when the actor is not found in the map source', () => {
+    it('returns undefined', () => {
+      const exampleActor = 'example-unknown-actor'
+      const exampleMapSource = '{"example-actor":"unexpected-mapping"}'
+      expect(mapActor(exampleActor, exampleMapSource)).toBe(undefined)
+    })
+  })
 })

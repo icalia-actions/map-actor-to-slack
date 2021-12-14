@@ -1,11 +1,19 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Map GitHub Actor
+description: |-
+  Maps the user that triggered the action to a list of known mappings - be it Slack ids, email addresses, etc.
+
 inputs:
-  milliseconds: # change this
+  actor-map:
+    description: The actor mapping JSON file
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  default-mapping:
+    description: The default mapping in case the actor is not found in the map
+    required: true
+
+outputs:
+  actor-mapping:
+    description: The corresponding value mapped to the actor
+
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: node12
+  main: index.js
