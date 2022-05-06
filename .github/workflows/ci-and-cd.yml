@@ -47,7 +47,7 @@ jobs:
 
       - name: Build Image
         id: build_test_image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           target: testing
           platforms: linux/amd64
@@ -87,7 +87,7 @@ jobs:
 
       - name: Load Testing Image
         id: load_test_image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           target: testing
           platforms: linux/amd64
@@ -136,7 +136,7 @@ jobs:
 
       - name: Build Image
         id: build_image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           target: release
           platforms: linux/amd64
