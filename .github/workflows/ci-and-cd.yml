@@ -79,7 +79,7 @@ jobs:
       GIT_COMMIT_SHORT_SHA: ${{ needs.build_test_image.outputs.git-commit-short-sha }}
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3.3.0
 
       - name: Set up Docker Buildx
         id: buildx
@@ -154,7 +154,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Checkout Code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3.3.0
 
       - name: Check if dist is up to date
         run: |
